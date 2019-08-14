@@ -1,18 +1,28 @@
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
+import requests
+import json
 
 app = Flask(__name__, template_folder=".")
 GoogleMaps(app)
 
 @app.route("/")
 def mapview():
+
+    send_url = "http://api.ipstack.com/check?access_key=fe105aaf529b654e755358dbad59d647"
+    geo_req = requests.get(send_url)
+    geo_json = json.loads(geo_req.text)
+    latitude = geo_json['latitude']
+    longitude = geo_json['longitude']
+    city = geo_json['city']
+
     # creating a map in the view
     mymap = Map(
         identifier="view-side",
-        lat=26.8467088,
-        lng=80.9461592,
-        markers=[(26.8467088, 80.9461592)]
+        lat=latitude,
+        lng=longitude,
+        markers=[(latitude, longitude)]
     )
     sndmap = Map(
         identifier="sndmap",
